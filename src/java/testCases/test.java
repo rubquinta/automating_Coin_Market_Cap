@@ -19,5 +19,7 @@ public class test extends testBase{
         System.out.println(coinMarket.buscarEnLista("Ethereum"));
         System.out.println(coinMarket.buscarEnLista("Chiliz"));
         System.out.println(coinMarket.buscarEnLista("SLP"));
+        System.out.println(coinMarket.buscarEnLista("Dogecoin"));
+        System.out.println(coinMarket.buscarEnLista("SHR"));
     }
 }

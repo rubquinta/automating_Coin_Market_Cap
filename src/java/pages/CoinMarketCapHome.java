@@ -1,32 +1,67 @@
 package pages;
 
 import base.SeleniumBase;
-import org.openqa.selenium.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.support.ui.Wait;
 import org.testng.annotations.Test;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CoinMarketCapHome extends SeleniumBase {
 
-    private String cryptocurrency;
+    //Objects Repository
+    @FindBy(xpath = "(//div[contains(@class,'price')]//a)[1]")
+    WebElement crytoPrice;
+
+    @FindBy(xpath = "//div[contains(text(),'Search')]")
+    WebElement searchCrypto;
+
+    @FindBy(xpath = "//input[contains(@placeholder,'What are you')]")
+    WebElement inputCryptos;
+
+    @FindBy(xpath = "//p[@font-weight='semibold']")
+    List<WebElement> homePageCryptos;
+
+    @FindBy(xpath = "(//div[contains(@class,'price')]//a)")
+    List<WebElement> homePagePrices;
+
+    @FindBy(xpath = "//div[contains(@class,'priceValue')]")
+    WebElement cryptoPagePrice;
+
+    @FindBy(xpath = "(//h2)[1]")
+    WebElement cryptoPageName;
+
+    @FindBy(xpath = "//td[@style='text-align: left;']//" +
+            "p[contains(text(),'100')]")
+    WebElement numOneHundred;
+
+    @FindBy(xpath = "//h1[contains(text(),'Today's Cryptocurrency" +
+            " Prices by Market Cap')]")
+    WebElement homeTitle;
+
     private List<WebElement> listOfCryptos;
     private List<WebElement> listOfPrices;
     private List<String> listaCrytos = new ArrayList<String>();
     private List<String>listaPrecios = new ArrayList<String>();
+    private String cryptocurrency;
 
-    public CoinMarketCapHome(WebDriver driver) {
+    public CoinMarketCapHome(WebDriver driver){
         super(driver);
+        PageFactory.initElements(driver,this);
+
     }
+
 
     public void setCryptocurrency(String cryptocurrency) {
         this.cryptocurrency = cryptocurrency;
     }
 
-    public void setCryptoName(String cryptocurrency) {
-        this.cryptoName = By.xpath("(//tbody//p[contains(text(),'" + this.cryptocurrency + "')])[1]");
-    }
 
     public void setListaCrytos(List<String> listaCrytos) {
         this.listaCrytos = listaCrytos;
@@ -36,28 +71,29 @@ public class CoinMarketCapHome extends SeleniumBase {
         this.listaPrecios = listaPrecios;
     }
 
-    //Objects Repository
+    public void setListOfCryptos(List<WebElement> listOfCryptos) {
+        this.listOfCryptos = listOfCryptos;
+    }
 
-    private By cryptoName = By.xpath("(//tbody//p[contains(text(),'" + this.cryptocurrency + "')])[1]");
-    private By table = By.xpath("//tbody//tr");
-    private By cryptoPrice = By.xpath("(//div[contains(@class,'price')]//a)[1]");
-    private By searchCrypto = By.xpath("//div[contains(text(),'Search')]");
-    private By inputCryptos = By.xpath("//input[contains(@placeholder,'What are you')]");
-    private By homePageCryptos = By.xpath("//p[@font-weight='semibold']");
-    private By homePagePrices = By.xpath("(//div[contains(@class,'price')]//a)");
-    private By cryptoPagePrice = By.xpath("//div[contains(@class,'priceValue')]");
-    private By cryptoPageName = By.xpath("(//h2)[1]");
-    private By numOneHundred = By.xpath("//td[@style='text-align: left;']//p[contains(text(),'100')]");
-    private By homeTitle = By.xpath("//h1[contains(text(),'Today's Cryptocurrency Prices by Market Cap')]");
+    public void setListOfPrices(List<WebElement> listOfPrices) {
+        this.listOfPrices = listOfPrices;
+    }
 
+    public static By buscadorCrypto(){
+        return By.xpath("//div[contains(text(),'Search')]");
+    }
+
+    public static By inputCrypto(){
+        return By.xpath("//input[contains(@placeholder,'What are you')]");
+    }
 
     //Key Driven
     public void buscarCrypto(String coin) throws  InterruptedException{
-        esperaExplicitaPresencia(searchCrypto,1);
-        findElement(searchCrypto).click();
-        esperaExplicitaPresencia(inputCryptos,1);
+        esperaExplicitaPresencia(buscadorCrypto(),1);
+        searchCrypto.click();
+        esperaExplicitaPresencia(inputCrypto(),1);
         type(coin, inputCryptos);
-        findElement(inputCryptos).sendKeys(Keys.ENTER);
+        inputCryptos.sendKeys(Keys.ENTER);
 
     }
 
@@ -73,19 +109,17 @@ public class CoinMarketCapHome extends SeleniumBase {
 
 
     public void generarLista(){
-        this.listOfCryptos = findElements(homePageCryptos);
-        this.listOfPrices = findElements(homePagePrices);
+
 
         do{
             scrollDown(driver, 1000);
             //esperaExplicitaPresencia(numOneHundred, 10);
-            this.listOfCryptos = findElements(homePageCryptos);
-            this.listOfPrices = findElements(homePagePrices);
+            setListOfCryptos(homePageCryptos);
+            setListOfPrices(homePagePrices);
 
         }while(this.listOfPrices.size()<100);
 
         setCryptocurrency(cryptocurrency);
-        setCryptoName(cryptocurrency);
         for (WebElement coin : this.listOfCryptos) {
             this.listaCrytos.add(coin.getText());
         }
@@ -95,9 +129,9 @@ public class CoinMarketCapHome extends SeleniumBase {
     }
 
     public String setValor(){
-        return findElement(cryptoPageName).getText() +
+        return cryptoPageName.getText() +
                 " tiene un precio actualmente de USD: " +
-                findElement(cryptoPagePrice).getText() + "\n";
+                cryptoPagePrice.getText() + "\n";
 
     }
 

@@ -1,9 +1,11 @@
 package base;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.SelectorDocument;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -23,6 +25,7 @@ public class SeleniumBase {
     public SeleniumBase(WebDriver driver){
         this.driver = driver;
     }
+
 
     //Wrappers Selenium
     /**
@@ -57,8 +60,8 @@ public class SeleniumBase {
      * @param inputText : texto a escribir
      * @param locator : Objeto By del repositorio
      */
-    public void type(String inputText, By locator){
-        driver.findElement(locator).sendKeys(inputText);
+    public void type(String inputText, WebElement locator){
+        locator.sendKeys(inputText);
     }
 
     /**
